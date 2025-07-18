@@ -15,7 +15,7 @@ const firebaseConfig = {
   appId: "1:747549095010:web:cdf74ecc79087715080d3b"
 };
 
-const GOOGLE_AI_API_KEY = "AIzaSyCAIisxYlJM9lHrUfTGeALv30-UplNw4Ys";
+const GOOGLE_AI_API_KEY = "AIzaSyBCG7MqGuvM6LCwC5h7BPx9eIELBjBlTJc";
 
 // --- COMPONENTES DE LA INTERFAZ ---
 

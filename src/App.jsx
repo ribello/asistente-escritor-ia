@@ -15,7 +15,7 @@ const firebaseConfig = {
   appId: "1:747549095010:web:cdf74ecc79087715080d3b"
 };
 
-const GOOGLE_AI_API_KEY = "AIzaSyBCG7MqGuvM6LCwC5h7BPx9eIELBjBlTJc";
+const GOOGLE_AI_API_KEY = "AIzaSyBurU72YTk7lSkX5pi6HBKSZnUcjl1nbC8";
 
 // --- COMPONENTES DE LA INTERFAZ ---
 
@@ -105,6 +105,11 @@ const EditorView = ({ project, onBack, db, storage, auth, setGlobalLoading }) =>
     const createEbook = () => {
         if (!project) return;
         const title = project.title || "Mi Libro";
+        const instructions = `<div id="print-instructions" style="text-align:center; padding: 2rem; background-color: #f0f9ff; border: 2px solid #38bdf8; border-radius: 8px; margin-bottom: 3rem; font-family: 'Inter', sans-serif; color: #075985;">
+            <h2 style="font-size: 1.5em; margin-top: 0;">¡Tu libro está listo!</h2>
+            <p style="font-size: 1.1em;">Para guardarlo como PDF, presiona las teclas <strong>Ctrl + P</strong> y, en la ventana de impresión, selecciona el destino <strong>"Guardar como PDF"</strong>.</p>
+            <button onclick="document.getElementById('print-instructions').style.display='none'; window.print();" style="background-color: #0ea5e9; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 1em; cursor: pointer;">Imprimir / Guardar PDF</button>
+        </div>`;
         const coverImage = project.coverImageUrl ? `<img src="${project.coverImageUrl}" alt="Portada" style="width:100%; max-width:600px; height:auto; display:block; margin:0 auto 5rem auto; page-break-after: always;">` : '';
         const indexHtml = project.indexContent ? `<div style="page-break-after: always;"><h2 style="text-align:center; font-size: 2.5em; margin-bottom: 2rem; font-family: 'Inter', sans-serif;">Índice</h2><div style="font-size: 1.2em; line-height: 2.2;">${project.indexContent.replace(/\n/g, '<br>')}</div></div>` : '';
         const content = project.chapters.map(c => `
@@ -112,7 +117,7 @@ const EditorView = ({ project, onBack, db, storage, auth, setGlobalLoading }) =>
             ${c.name ? `<h3 style="font-size: 1.5em; font-style: italic; color: #555; text-align:center; margin-bottom: 2rem; font-family: 'Inter', sans-serif;">${c.name}</h3>` : ''}
             <div>${(c.formattedContent || c.rawContent).split('\n').map(p => `<p style="text-indent:2em; margin-bottom:1em; line-height:1.8;">${p}</p>`).join('')}</div>
         `).join('');
-        const htmlContent = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${title}</title><style>body{font-family:'Georgia',serif;line-height:1.8;color:#333;max-width:800px;margin:2rem auto;padding:2rem;} @page { margin: 1in; } h1,h2,h3 {font-family: 'Inter', sans-serif; text-align:center; page-break-after: avoid;} h1{font-size:3.5em; page-break-before: always;} h2{font-size:2em; page-break-before: always; padding-top: 2rem;} p{text-indent:2em;margin-bottom:1em; line-height:1.8;}</style></head><body>${coverImage}<h1 style="page-break-before: always;">${title}</h1>${indexHtml}<div>${content}</div></body></html>`;
+        const htmlContent = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${title}</title><style>body{font-family:'Georgia',serif;line-height:1.8;color:#333;max-width:800px;margin:2rem auto;padding:2rem;} @page { margin: 1in; } @media print { #print-instructions { display: none; } } h1,h2,h3 {font-family: 'Inter', sans-serif; text-align:center; page-break-after: avoid;} h1{font-size:3.5em; page-break-before: always;} h2{font-size:2em; page-break-before: always; padding-top: 2rem;} p{text-indent:2em;margin-bottom:1em; line-height:1.8;}</style></head><body>${instructions}${coverImage}<h1 style="page-break-before: always;">${title}</h1>${indexHtml}<div>${content}</div></body></html>`;
         const blob = new Blob([htmlContent], { type: 'text/html' });
         window.open(URL.createObjectURL(blob), '_blank');
     };
@@ -212,7 +217,8 @@ const WritingView = ({ projectData, updateProject, setGlobalLoading }) => {
         setGlobalLoading(true, "Corrigiendo con IA...");
         try {
             const prompt = `Eres un asistente de escritura experto para un novelista. Tu tarea es tomar el siguiente fragmento de texto, corregir la ortografía y la gramática, mejorar el estilo para que sea más evocador y literario, y darle un formato de maquetación simple usando saltos de línea para los párrafos. No añadas comentarios, solo devuelve el texto procesado. El texto es:\n\n"${textToProcess}"`;
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+            // --- CORRECCIÓN: Cambiar el nombre del modelo ---
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -272,7 +278,8 @@ const IndexView = ({ projectData, updateProject, setGlobalLoading }) => {
         try {
             const chapterList = projectData.chapters.map(c => `Capítulo ${c.number}: ${c.name || 'Sin título'}`).join('\n');
             const prompt = `Eres un editor profesional. A partir de la siguiente lista de capítulos, crea un índice de libro bien formateado. Solo devuelve el índice, sin comentarios adicionales.\n\nLISTA:\n${chapterList}`;
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+            // --- CORRECCIÓN: Cambiar el nombre del modelo ---
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -360,7 +367,8 @@ const AssistantView = ({ setGlobalLoading }) => {
         setQuery('');
         setGlobalLoading(true, "Pensando...");
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-latest:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+            // --- CORRECCIÓN: Cambiar el nombre del modelo ---
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: newHistory })

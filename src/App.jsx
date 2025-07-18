@@ -217,8 +217,7 @@ const WritingView = ({ projectData, updateProject, setGlobalLoading }) => {
         setGlobalLoading(true, "Corrigiendo con IA...");
         try {
             const prompt = `Eres un asistente de escritura experto para un novelista. Tu tarea es tomar el siguiente fragmento de texto, corregir la ortografía y la gramática, mejorar el estilo para que sea más evocador y literario, y darle un formato de maquetación simple usando saltos de línea para los párrafos. No añadas comentarios, solo devuelve el texto procesado. El texto es:\n\n"${textToProcess}"`;
-            // --- CORRECCIÓN: Cambiar el nombre del modelo ---
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -278,8 +277,7 @@ const IndexView = ({ projectData, updateProject, setGlobalLoading }) => {
         try {
             const chapterList = projectData.chapters.map(c => `Capítulo ${c.number}: ${c.name || 'Sin título'}`).join('\n');
             const prompt = `Eres un editor profesional. A partir de la siguiente lista de capítulos, crea un índice de libro bien formateado. Solo devuelve el índice, sin comentarios adicionales.\n\nLISTA:\n${chapterList}`;
-            // --- CORRECCIÓN: Cambiar el nombre del modelo ---
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -367,8 +365,7 @@ const AssistantView = ({ setGlobalLoading }) => {
         setQuery('');
         setGlobalLoading(true, "Pensando...");
         try {
-            // --- CORRECCIÓN: Cambiar el nombre del modelo ---
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: newHistory })

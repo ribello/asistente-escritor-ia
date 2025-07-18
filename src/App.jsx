@@ -15,11 +15,7 @@ const firebaseConfig = {
   appId: "1:747549095010:web:cdf74ecc79087715080d3b"
 };
 
-<<<<<<< HEAD
 const GOOGLE_AI_API_KEY = "AIzaSyBurU72YTk7lSkX5pi6HBKSZnUcjl1nbC8";
-=======
-const GOOGLE_AI_API_KEY = "AIzaSyCAIisxYlJM9lHrUfTGeALv30-UplNw4Ys";
->>>>>>> parent of a36ee8b (Actualizar API Key)
 
 // --- COMPONENTES DE LA INTERFAZ ---
 
